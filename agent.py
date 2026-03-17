@@ -261,9 +261,20 @@ When answering questions:
 - Do not read additional files beyond these unless absolutely necessary
 - Trace the complete flow: browser → Caddy reverse proxy → FastAPI app → PostgreSQL database → back
 
-**For error diagnosis questions**:
-- First use `query_api` to reproduce the error
-- Then use `read_file` to examine the source code and identify the bug
+**For error diagnosis questions** (e.g., "What bug...", "Why does it crash...", "Which endpoint is risky..."):
+- First use `query_api` to reproduce the error if applicable
+- Then use `read_file` to examine the source code
+- **When looking for bugs, specifically check for:**
+  - Division operations that could cause ZeroDivisionError (look for `/` operator)
+  - Sorting operations with potentially None values (look for `sorted()`, `.sort()`)
+  - None-unsafe operations (accessing attributes/methods on potentially None values)
+  - Missing error handling for edge cases
+- Identify the exact line and explain the root cause
+
+**For comparison questions** (e.g., "Compare X and Y...", "How does A differ from B..."):
+- Read the source code for both components being compared
+- Identify key differences in approach, patterns, or behavior
+- Provide a structured comparison highlighting similarities and differences
 
 Important: After gathering information with tools, always provide a complete, final answer that directly addresses the user's question. When you have read the relevant files, synthesize the information into a comprehensive answer. Do not say "let me continue" or similar phrases in your final response - instead, provide the complete answer based on what you have learned.
 """
