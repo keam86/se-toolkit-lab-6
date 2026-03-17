@@ -24,6 +24,8 @@ def run_agent(question: str) -> tuple[int, dict, str]:
     return result.returncode, output, result.stderr
 
 
+# Task 2 tests (documentation agent)
+
 def test_agent_merge_conflict_question_uses_read_file() -> None:
     """Test that agent uses read_file tool for merge conflict question."""
     returncode, output, stderr = run_agent("How do you resolve a merge conflict?")
@@ -63,7 +65,6 @@ def test_agent_wiki_files_question_uses_list_files() -> None:
     
     # Verify required fields exist
     assert "answer" in output, "Missing 'answer' field in output"
-    assert "source" in output, "Missing 'source' field in output"
     assert "tool_calls" in output, "Missing 'tool_calls' field in output"
     
     # Verify tool_calls is populated
@@ -77,3 +78,56 @@ def test_agent_wiki_files_question_uses_list_files() -> None:
     
     # Verify answer is not empty
     assert len(output["answer"].strip()) > 0, "'answer' should not be empty"
+
+
+# Task 3 tests (system agent)
+
+def test_agent_backend_framework_question_uses_read_file() -> None:
+    """Test that agent uses read_file to find backend framework."""
+    returncode, output, stderr = run_agent("What Python web framework does this project's backend use?")
+    
+    # Check exit code
+    assert returncode == 0, f"agent.py failed with: {stderr}"
+    
+    # Verify required fields exist
+    assert "answer" in output, "Missing 'answer' field in output"
+    assert "tool_calls" in output, "Missing 'tool_calls' field in output"
+    
+    # Verify tool_calls is populated
+    tool_calls = output["tool_calls"]
+    assert isinstance(tool_calls, list), "'tool_calls' should be an array"
+    assert len(tool_calls) > 0, "Expected at least one tool call"
+    
+    # Verify read_file was used
+    tool_names = [call.get("tool") for call in tool_calls]
+    assert "read_file" in tool_names, "Expected 'read_file' tool to be called"
+    
+    # Verify answer mentions FastAPI
+    answer = output["answer"].lower()
+    assert "fastapi" in answer, f"Answer should mention FastAPI, got: {output['answer'][:200]}"
+
+
+def test_agent_database_count_question_uses_query_api() -> None:
+    """Test that agent uses query_api to count database items."""
+    returncode, output, stderr = run_agent("How many items are currently stored in the database?")
+    
+    # Check exit code
+    assert returncode == 0, f"agent.py failed with: {stderr}"
+    
+    # Verify required fields exist
+    assert "answer" in output, "Missing 'answer' field in output"
+    assert "tool_calls" in output, "Missing 'tool_calls' field in output"
+    
+    # Verify tool_calls is populated
+    tool_calls = output["tool_calls"]
+    assert isinstance(tool_calls, list), "'tool_calls' should be an array"
+    assert len(tool_calls) > 0, "Expected at least one tool call"
+    
+    # Verify query_api was used
+    tool_names = [call.get("tool") for call in tool_calls]
+    assert "query_api" in tool_names, "Expected 'query_api' tool to be called"
+    
+    # Verify answer contains a number
+    import re
+    numbers = re.findall(r'\d+', output["answer"])
+    assert len(numbers) > 0, f"Answer should contain a number, got: {output['answer'][:200]}"
