@@ -7,8 +7,8 @@ from pathlib import Path
 
 def test_agent_outputs_valid_json_with_required_fields() -> None:
     """Test that agent.py outputs valid JSON with 'answer' and 'tool_calls' fields."""
-    # Get the project root directory (parent of backend/)
-    project_root = Path(__file__).resolve().parent.parent.parent.parent
+    # Get the project root directory
+    project_root = Path(__file__).resolve().parent.parent
     
     # Run agent.py with a simple question
     result = subprocess.run(
