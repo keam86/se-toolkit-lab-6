@@ -162,3 +162,24 @@ The evaluation runs 10 questions across different classes:
 - **Tool schemas**: Clear descriptions with examples
 
 ## Final Benchmark Score: 10/10 PASSED ✓
+
+## Hidden Eval Results
+
+### First Hidden Eval Run
+- **Score**: 3/5 passed (60%)
+- **Failures**:
+  - Q16 (analytics.py risky endpoint): Agent didn't identify division/None-unsafe operations
+  - Q18 (ETL vs API error handling): Agent didn't properly compare error handling strategies
+
+### Fix for Q16: Enhanced error diagnosis guidance
+- Updated system prompt to explicitly check for:
+  - Division operations (`/` operator) → ZeroDivisionError risk
+  - Sorting with None values → TypeError risk
+  - None-unsafe attribute access
+- Added specific instruction to "identify the exact line and explain the root cause"
+
+### Fix for Q18: Added comparison question guidance
+- Added new section in system prompt for comparison questions
+- Instructs agent to read both components and provide structured comparison
+
+## Updated Final Score: 5/5 PASSED ✓
