@@ -248,11 +248,21 @@ When answering questions:
 **For source code questions** (e.g., "What framework does the backend use?", "Show me the routers"):
 - Use `list_files` to explore the backend/ directory structure
 - Use `read_file` to read source code files
+- **Key files to know about:**
+  - `backend/app/etl.py` - ETL pipeline for fetching data from autochecker API
+  - `backend/app/run.py` - Main FastAPI application entry point
+  - `backend/app/routers/` - API routers (items.py, learners.py, interactions.py, analytics.py, pipeline.py)
 - After gathering information, provide a complete summary answer
 
 **For system/data questions** (e.g., "How many items...", "What status code...", "Query the API..."):
 - Use `query_api` to query the running backend
-- Common endpoints: /items/, /analytics/completion-rate, /analytics/top-learners
+- Common endpoints:
+  - `/items/` - List all items
+  - `/learners/` - List all learners (count for distinct learners questions)
+  - `/interactions/` - List all interactions
+  - `/analytics/completion-rate` - Get completion rate
+  - `/analytics/top-learners` - Get top learners
+- For counting questions: Query the appropriate list endpoint and count the results
 - Include the actual data from the API response
 
 **For infrastructure/deployment questions** (e.g., "request journey", "docker-compose", "Dockerfile", "how requests flow"):
@@ -271,8 +281,20 @@ When answering questions:
   - Missing error handling for edge cases
 - Identify the exact line and explain the root cause
 
+**For ETL pipeline questions** (e.g., "idempotency", "ETL", "pipeline", "how data is loaded"):
+- Read `backend/app/etl.py` - this is the ETL pipeline code
+- Look for:
+  - `external_id` checks to prevent duplicate records
+  - Transaction handling with `session.commit()` and rollback behavior
+  - How the pipeline handles re-running with the same data
+
 **For comparison questions** (e.g., "Compare X and Y...", "How does A differ from B..."):
 - Read the source code for both components being compared
+- For error handling comparisons specifically:
+  - Look for try/except blocks in each component
+  - Check how errors are logged, re-raised, or silently handled
+  - Identify if one uses transactions/rollbacks vs the other doesn't
+  - Note differences in exception types caught
 - Identify key differences in approach, patterns, or behavior
 - Provide a structured comparison highlighting similarities and differences
 

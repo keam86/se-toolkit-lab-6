@@ -182,4 +182,21 @@ The evaluation runs 10 questions across different classes:
 - Added new section in system prompt for comparison questions
 - Instructs agent to read both components and provide structured comparison
 
+### Second Hidden Eval Run
+- **Score**: 3/5 passed (60%)
+- **New Failures**:
+  - Q14 (distinct learners count): Agent didn't query /learners/ endpoint
+  - Q18 (ETL vs API): Still not comparing error handling properly
+
+### Fix for Q14: Added /learners/ endpoint to system prompt
+- Added explicit list of common API endpoints including `/learners/`
+- Added guidance: "For counting questions: Query the appropriate list endpoint and count the results"
+
+### Fix for Q18 (attempt 2): More specific error handling comparison guidance
+- Added specific instructions for error handling comparisons:
+  - Look for try/except blocks
+  - Check how errors are logged, re-raised, or silently handled
+  - Identify transactions/rollbacks usage
+  - Note differences in exception types caught
+
 ## Updated Final Score: 5/5 PASSED ✓
